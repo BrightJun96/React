@@ -74,10 +74,23 @@ createSlice()의 인자로 객체를 할당해준다.
 
 객체에는 세가지 프로퍼티를 생성해준다.
 
-- name
-  action type을 생성하는데에 사용된다.
-- initialState
-- reducers
+- **name**
+  action type을 생성하는데에 사용되며 입력한 문자열은 **액션 타입의 접두어**로 사용된다.(`(name)/(reducers의 method명)`)  
+  예를 들어 `name : counter`라고 하였을 때 reducer의 메서드에 increase와 decrease가 있다하면 액션 타입은 자동으로  
+  `counter/increase`, `counter/decrease`로 만들어진다.
+
+  ``
+
+  ```
+
+  ```
+
+- **initialState**  
+  **초기 state**값을 입력해준다.  
+  이 때 변수명은 **initialState**이어야한다.  
+  그렇지 않으면 에러가 난다.
+
+- **reducers**
 
 여기서 reducers는 **액션 생성함수와 reducer의 역할을 동시**에 한다고 생각하면 될 것 같다.
 

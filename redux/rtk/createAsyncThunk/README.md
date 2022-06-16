@@ -8,7 +8,7 @@ createAsyncThunk는 첫번째 인자로 액션타입(문자열)을 할당하고 
 
 #### type
 
-비동기 요청 상태에 따른추가적인 action type을 만들어내는데에 사용된다.
+비동기 요청 상태에 따른 추가적인 action type을 만들어내는데에 사용된다.
 
 `users/requestStatus`라는 action type을 할당하면 3가지 액션타입을 만들어주며  
 createAsyncThunk로 만든 **thunk함수**는 3가지 타입에 대한 **3가지 액션 생성함수를 사용**할 수 있다.
@@ -16,6 +16,9 @@ createAsyncThunk로 만든 **thunk함수**는 3가지 타입에 대한 **3가지
 - pending : `users/requestStatus/pending`
 - fullfilled : `users/requestStatus/fullfilled`
 - rejected : `users/requestStatus/rejected`
+
+이 때 **type명은 겹칠 수 있기 때문에 createSlice의 name과 다르게 하는 것이 좋다.**  
+예를 들어 createSlice의 name이 users라고 하였을 때 createAsyncThunk의 type은 users/requestStatus로 해주는 식으로 말이다.
 
 #### payloaderCreator
 
@@ -125,6 +128,19 @@ const updateUser = createAsyncThunk(
 
 3. 에러값은 `rejectWithValue(err.response.data)`로 설정하여 `rejected 리듀서(state,action)`의 **action.payload**로 설정하거나
    `rejected 리듀서(state,action)`에서 **action.error**값으로 참조할 수 있다.
+
+## error handling
+
+createAsyncThunk는 항상 resolved된 promise를 반환한다.  
+즉 , fullfilled이던 rejected이던 항상 then메서드안에서 request status값을 캐치할 수 있다.
+
+```js
+const onClick = () => {
+  dispatch(fetchUserById(userId)).then(() => {
+    // do additional work
+  });
+};
+```
 
 ## redux-thunk by hand
 
