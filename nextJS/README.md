@@ -19,6 +19,20 @@ next.js는 **서버 사이드 렌더링을 위한 리액트 프레임워크**이
 
 next.js에서 가장 중요한 특징은 **pre-rendering**이다.
 
+- 페이지(파일) 기반 라우팅 스템
+
+- pre-rendering  
+  서버에서 html을 만들어 보내주는 것을 말한다.  
+  유저는 빈 화면 대신 먼저 구조화된 html을 볼 수 있다.
+  즉, 구조화된 html을 먼저 보여준 뒤 javascript를 hydration해준다.
+
+ref : https://nextjs.org/learn/foundations/how-nextjs-works/rendering
+
+- automatic code spliting  
+  사용자가 처음에 접속하는 페이지에 대한 코드만 먼저 로드하여 빠르게 페이지를 보여준다. 첫 페이지에 대한 코드로드 이후 다른 페이지에 대한 코드를 로드한다.
+
+- API 설계 with serverless function
+
 ### CSR
 
 기존 리액트는 CSR(Client Side Rendering)으로 서버로부터 요청하여 js파일로 응답해주면 브라우저가 이를 파싱하여 html,css로 파싱하여 렌더링을 해준다.
