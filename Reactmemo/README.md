@@ -106,8 +106,11 @@ Parent컴포넌트안에는 3개의 Child컴포넌트가 있다.
 
 ## 💊 React.memo
 
-> React.memo
-> React.memo는 고차컴포넌트(Higher-Order Component)로서 같은 결과를 렌더링해낸다면 React.memo를 호출하여 결과를 메모이징하도록 래핑하여 경우에 따라서 성능 향상을 시킬수가 있다.
+React.memo는 고차컴포넌트(Higher-Order Component)로서 같은 결과를 렌더링해낸다면 React.memo를 호출하여 결과를 메모이징하도록 래핑하여 경우에 따라서 성능 향상을 시킬수가 있다.
+
+- 이는 클래스 컴포넌트의 생명주기 메서드 중 하나인 shouldComponentUpdate의 동작과 비슷하다.
+  해당 컴포넌트의 props와 state를 참조하여 변경사항이 없다면 컴포넌트를 업데이트해주지 않는다.
+  클래스 컴포넌트를 최적화할 때 사용하는 메서드이며 React.memo 동작원리도 이와 유사하다 생각하면 되고 간편화되었다고 생각하면 된다.
 
 따라서 불필요한 리렌더링을 방지하기 위해서는 React.memo로 해당 컴포넌트를 감싸주면 된다.
 

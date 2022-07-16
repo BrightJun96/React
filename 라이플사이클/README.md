@@ -4,6 +4,9 @@
 
 - **클래스 컴포넌트에서만 사용**할 수 있으며 함수형 컴포넌트에서는 이와 비슷하게 구현할 수 있는 **_Hook_**이 존재한다.
 
+요즘은 클래스 컴포넌트를 거의 사용하지는 않지만 라이프사이클을 useEffect나 memoizing에도 비슷한 맥락으로 적용된다.
+때문에 클래스 컴포넌트의 라이프 사이클을 이해하고 있어야 자주 사용하는 useEffect나 memoizing을 쉽게 이해할 수 있다.
+
 ## 용도
 
 컴포넌트가
@@ -22,18 +25,31 @@
 - Update : 컴포넌트가 **업데이트** 됬을 때
 - Unmount : 컴포넌트가 **사라질 때**
 
-#### 컴포넌트가 리렌더링 되는 경우
-
-- **props**값이 변경될 때
-- **state**값이 변경될 때
-- **부모 컴포넌트가 리렌더링**될 때
-
 ## class와 class component에서의 class 문법 적용
 
 class 컴포넌트의 라이프 사이클을 알아보기전에 class 문법에 대해 간략하게 알아보자.
 
 ```js
 class Person {}
+
+class Person extends Component{
+
+constructor(props){
+super(props)
+}
+  render(){
+
+    const {height,name} = this.props
+    return ..
+  }
+}
+
+
+<Person height= '184' name ='jev'/>
+// 위 클래스의 인스턴스이며 constructor에 props가 전달된다.
+
+
+
 ```
 
 자바스크립트의 프로토타입 기반 문법을 클래스 기반 문법처럼 사용할 수 있도록하는 문법이다.
@@ -231,36 +247,120 @@ const jev = new Person("jev");
 jev.#name; // 참조 불가
 ```
 
-## Mount
+## 라이프 사이클 메서드의 종류
 
-### constructor()
+![img](lifecycle.png)
+
+라이프사이클 메서드의ㅣ 종류는 총 9가지이다.
+
+will 접두사가 붙은 메서드는 어떤 작업을 하기전에 실행되는 메서드이고, Did 접두사가 붙은 메서드는 어떤 작업을 한 후에 실행되는 메서드이다.
+
+라이프사이클은 총 세가지로써 마운트(mount),업데이트(update),언마운트(unmount)로 나눌 수 있다.
+
+- 마운트 : 컴포넌트가 화면에 나타나는 것을 마운트라고 표현한다. DOM이 생성되고 웹 브라우저상에 나타난다.
+
+**마운트할 때 호출하는 메서드**
+
+1. constructor : 컴포넌트를 새로 만들 때마다 호출되는 클래스 생성자 메서드이다.
+
+2. getDerivedStateFromProps : props에 있는 값을 state에 넣을 때 사용하는 메서드이다.
+
+3. render : 리액트 요소들을 렌더링하는 메서드이다.
+
+4. componentDidmount : 컴포넌트가 화면에 나타난 후 즉, DOM이 생성된 이후 호출되는 메서드이다.
+
+- 업데이트 : 리렌더링되면서 컴포넌트의 데이터와 뷰가 업데이트된다.
+
+### 컴포넌트가 리렌더링 되는 경우
+
+컴포넌트는 다음과 같은 경우에 리렌더링되면서 업데이트된다.
+
+    - props값이 변경될 때
+    - state값이 변경될 때
+    - 부모 컴포넌트가 리렌더링될 때(부모 컴포넌트가 리렌더링되면 자식 컴포넌트도 전부 리렌더링된다.)
+
+**업데이트될 때 호출하는 메서드**
+
+1. getDerivedStateFromProps
+
+2. shouldComponentUpdate : 컴포넌트의 리렌더링 여부를 결정해주는 메서드이다.
+   true나 false를 반환하며 true면 컴포넌트가 update되며 false면 컴포넌트가 update되지 않는다.
+
+3. render
+
+4. getSnapshotBeforeUpdate : 컴포넌트 변화를 DOM에 반영하기 바로 직전에 호출되는 메서드이다.
+
+5. componentDidUpdate : 컴포넌트의 업데이트 작업이 끝난 후 호출하는 메서드이다.
+
+- 언마운트 : 컴포넌트가 화면에서 사라지는 것을 언마운트라고 표현한다.
+
+1. componentWillUnmount : 컴포넌트가 화면에서 사라지기 전에 호출되는 메서드이다.
+   컴포넌트가 사라질 때 즉 다른 화면으로 전환될 때 특정 state를 초기화하고 싶다면 이 메서드에서 하면 된다.
+
+따라서 라이프사이클은 컴포넌트가 화면에 나타났을 때, 업데이트 됬을 때, 컴포넌트가 사라질 때 개발자가 구현하고 싶은 기능을 해당 시점에 구현하면 된다.
+
+## constructor()
 
 `constructor(props)`
 
 - **state 설정과 메서드 바인딩**을 하는 곳이다.
 - 메서드를 바인딩하거나 state를 초기화하는 작업이 없다면, 해당 React 컴포넌트에는 생성자를 구현하지 않아도 된다.
   클래스 필드 문법(ES2022)을 사용하면 constructor를 사용하지 않아도 된다.
-- **마운트되기전에 호출**된다.
-- **super(props)를 호출**하며 props를 전달하여 props를 사용한다.(클래스 몸체에서 바로 선언하면 사용할 수 있다.)
+- **마운트되기 전에 호출**된다.
+- **super(props)를 호출**하며 props를 전달하여 사용한다.(클래스 몸체에서 바로 선언하면 사용할 수 있다.)
 - constructor() 내부에서 **setState()를 호출하면 안된다.**
 
-#### ✏️ getDerivedStateFromProps
+## getDerivedStateFromProps
 
-`static getDerivedStateFromProps(props, state)`
+```js
+static getDerivedStateFromProps(props, state){
+
+  if(props.value !== state.value){
+    return {value : props.vlaue}
+  }
+
+  return null
+}
+
+
+```
 
 - **props 값을 state에 쓰고 싶을 때** 사용한다.
-  (이러한 경우는 잘 없다.)
 - getDerivedStateFromProps는 **최초 마운트 시와 갱신 시 모두에서 render 메서드를 호출하기 직전에 호출**된다.
 
 - props값을 state에 쓰는 이유는 뭘까?
-  > 성능을 개선시키기위해서 쓰려한다.
-  > state를 setState()로 업데이트하면 리렌더링이 된다.
-  > (state가 변경되면 리렌더링됨.)
-  > 때문에 props로 초기 state 값을 넣주고 props값에 따른 state변경에 의존하여 성능을 개선시키기위해 사용한다.
-  >
-  > > 하지만 이는 memoization으로 해결할 수 있다.
+  부모컴포넌트에서 정의한 state값을 자식 컴포넌트로 넘겨줘 자식 컴포넌트의 state값으로 사용하는 경우 사용한다.
 
-#### ✏️ render()
+밑 예시는 이상하긴 하지만 state값을 다른 state값의 초깃값으로 사용하기 사용한다.
+이는 보통 state값이 항상 변하지 않고 내가 부분적으로 원할 때만 바뀌게 하기 위해서 다른 state값으로 사용한다.
+
+```js
+class Child extends Component {
+  state = {
+    myNumber: this.props.number,
+  };
+
+  render() {
+    return (
+      <>
+        <h1>{this.state.myNumber}</h1>
+      </>
+    );
+  }
+}
+
+class Parent extends Component {
+  state = {
+    count: 0,
+  };
+
+  render() {
+    return <Child number={this.state.count} />;
+  }
+}
+```
+
+## render()
 
 `render()`
 
@@ -272,34 +372,84 @@ jev.#name; // 참조 불가
   > **브라우저와 상호 작용이 필요한 작업**은 ComponentDidMount나 다른 생명주기 메서드에서 구현해야한다.
   > 리액트 요소들이 **렌더링된 이후에 요소들이 완성**되기 때문에 이후의 작업에서 요소들을 건드리는 작업을 해야한다.
 
-#### ✏️ ComponentDidMount
+주의해야할 점은 이 메서드 안에서는 이벤트 핸들러가 아닌 곳에서 setState를 사용하면 안된다.
+또한 이 메서드안에서는 DOM에 직접적으로 접근하면 안된다.
+render 리액트 요소들을 그려주는 곳이기 때문에 만들어지지않은 DOM에 접근하려 하면 에러가 발생할 수 있다.
+
+### (중요)setState를 사용할 수 있는 곳
+
+setState는 state를 변경한다. state변경은 컴포넌트를 리렌더링시킨다.
+만약 클래스 컴포넌트의 render()나 함수 컴포넌트의 반환문 이전에 useEffect에 사용하지않고 외부에서 setState를 사용한다고 해보자.
+해당 부분은 리액트요소를 만들어주는 부분이며 또 state값을 사용하고 있을 것인데 거기서 state를 업데이트하면 state가 제대로 반영되지 못할 뿐더러 계속해서 렌더링된다.
+render라는 메서드는 리액트 요소들을 그려주는 부분인데 이곳에서 리렌더링을 발생시키면 다시 render메서드가 작용되면서 리렌더링이 발생되고 또 render메서드를 반복한다.
+이러한 반복이 계속되기때문에 무한리렌더링이 되는 것이다.
+
+때문에 setState는 특정시점에 변경할 수 있도록 해줘야한다.
+
+- 이벤트 핸들러(이벤트 핸들러는 비동기적으로 작동하며 setState도 비동기적으로 작동한다.)
+- componentDidMount
+- componentDidUpdate
+
+## [ComponentDidMount](https://reactjs.org/docs/react-component.html#componentdidmount)
 
 `componentDidMount()`
 
+DOM을 참조하거나 state에 변화를 주고 싶을 때 사용하면 된다.
+
 - 컴포넌트가 **마운트된 직후에 해당 메서드가 호출**된다.
+  하지만 해당 메서드가 꼭 한번만 실행되는 것은 아니다.
+  만약 해당 컴포넌트의 props의 key값이 지속적으로 바뀐다면 해당 컴포넌트는 key 값이 바뀔 때마다 마운트된다.
+
+Ref
+
+- https://linguinecode.com/post/understanding-react-componentdidmount
+
 - **DOM 노드가 있어야 하는 초기화 작업**은 이 메서드에서 이루어지면 된다.
 - **외부에서 데이터를 불러와야 한다면,** 네트워크 요청을 보내기 적절한 위치이다.(비동기 처리)
 
----
+### 왜 이 메서드에서 네트워크 요청을 해야하는 것일까?
 
-### ⏩ Update
+componentDidMount이전에 네트워크 요청을 하면 데이터값을 제대로 응답받지 못할 수도 있기 때문이다.
 
-#### ✏️ getDerivedStateFromProps
+또한 data를 응답받아올 때는 state로 설정해야한다.
+네트워크 요청(fetch,axios)은 비동기적으로 동작하며 setState도 비동기적으로 동작한다.
+하지만 data값을 state값으로 설정하지않고 변수값으로 할당하면 해당 변수값을 프로미스내에서 변경해야한다.
+그러나 비동기함수는 모든 코드가 모두 실행된 뒤에 반영되므로 위 방법은 데이터값이 반영되지 못한다.
 
-`static getDerivedStateFromProps(props, state)`
+```js
+import React from "react";
 
-- **props 값을 state에 쓰고 싶을 때** 사용한다.
-  (이러한 경우는 잘 없다.)
-- getDerivedStateFromProps는 **최초 마운트 시와 갱신 시 모두에서 render 메서드를 호출하기 직전에 호출**된다.
+const App = () => {
+  let data = null;
 
-#### ✏️ shouldComponentupdate
+  fetch("https://jsonplaceholder.typicode.com/todos/1")
+    .then((response) => response.json())
+    .then((json) => (data = json));
+
+  return (
+    <>
+      <h1>{data}</h1>
+    </>
+  );
+};
+
+export default App;
+```
+
+위처럼 해당 데이터를 조회하면 데이터는 null이다. 즉 비동기이기 때문에 반영되지 않는 것이다.
+그렇기 때문에 setState로 데이터값을 설정해줘야하며 dom이 완성된 이후에 응답받아야하므로 componentDidMount에서 네트워크 요청을 하는 것이 맞다.
+
+이 메서드는 처음 렌더링이 된 이후에 state변경으로 인해 추가적인 리렌더링을 발생시킨다.
+그래서 componentDidMount에서 setState로 state값을 변경하면 처음 화면에서는 두 번 렌더링이 발생하는 것이다.
+
+## shouldComponentupdate
 
 `shouldComponentUpdate(nextProps, nextState)`
 
 - shouldComponentUpdate()는 **props 또는 state가 새로운 값으로 갱신되어서 렌더링이 발생하기 직전에 호출**된다.
 - 이 메서드는 **초기 렌더링 또는 forceUpdate()가 사용될 때**에는 호출되지 않는다.
 
-#### ✏️ render()
+## render()
 
 `render()`
 
@@ -311,7 +461,7 @@ jev.#name; // 참조 불가
   > **브라우저와 상호 작용이 필요한 작업**은 ComponentDidMount나 다른 생명주기 메서드에서 구현해야한다.
   > 리액트 요소들이 **렌더링된 이후에 요소들이 완성**되기 때문에 이후의 작업에서 요소들을 건드리는 작업을 해야한다.
 
-#### ✏️ getSnapShotBeforeUpdate
+## getSnapShotBeforeUpdate
 
 ` getSnapshotBeforeUpdate(prevProps, prevState)`
 
@@ -319,12 +469,13 @@ jev.#name; // 참조 불가
 - 이 메서드를 사용하면 컴포넌트가 DOM으로부터 스크롤 위치 등과 같은 정보를 이후 **변경되기 전에** 얻을 수 있다.
 - 이 생명주기 메서드가** 반환하는 값은 componentDidUpdate()에 인자로 전달**된다.
 
-#### ✏️ componentDidUpdate
+## componentDidUpdate
 
 `componentDidUpdate(prevProps, prevState, snapshot)`
 
-- 이 메서드는 **갱신이 일어난 직후에 호출**된다.
-  최초렌더링에는 호출되지 않는다.
+componentDidUpdate는 업데이트된 이후에 이전 props와 이전 state를 참조하여 로직을 구현할 수 있는 곳이다.
+
+- 이 메서드는 **갱신이 일어난 직후에 호출**된다. 최초렌더링에는 호출되지 않는다.
 - 컴포넌트가 갱신되었을 때 **DOM을 조작하기 위해** 해당 메서드를 활용하면 좋다.
 - setState()를 사용할 수 있지만, **추가적인 렌더링이 발생하여 성능 저하를 발생시킬 수 있고 무한 렌더링을 발생**시킬 수 있다.
   때문에 **조건문**으로 조건을 걸어 렌더링 해줘야한다.
@@ -342,4 +493,4 @@ jev.#name; // 참조 불가
 - 컴포넌트가 **마운트 해제되어 제거되기 직전에 호출**된다.
 - 이 메서드 내에서 **타이머 제거, 네트워크 요청 취소, componentDidMount() 내에서 생성된 데이터 불러오기 해제** 등 필요한 모든 정리 작업을 수행한다.
 
-- 이제 컴포넌트는 다시 렌더링되지 않으므로, componentWillUnmount() 내에서 **setState()를 호출하면 안된다. **
+- 이제 컴포넌트는 다시 렌더링되지 않으므로, componentWillUnmount() 내에서 **setState()를 호출하면 안된다.**
